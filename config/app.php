@@ -143,6 +143,8 @@ return [
         // 'store'  => 'redis',
     ],
 
+    'bank_credit_interest_rate' => env('BANK_CREDIT_INTEREST_RATE', '7.9'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
