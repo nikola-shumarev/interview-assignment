@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BankCreditController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,8 @@ use Inertia\Inertia;
 |
 */
 
-// Redirect to /bank-credits if authenticated, otherwise show Login
+Route::middleware('auth')->group(function () {
+    // Redirect to /bank-credits if authenticated, otherwise show Login
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect()->route('bank-credits');
@@ -25,14 +28,17 @@ Route::get('/', function () {
     return Inertia::render('Auth/Login');
 });
 
-Route::get('/bank-credits', function () {
-    return Inertia::render('BankCredits');
-})->middleware(['auth', 'verified'])->name('bank-credits');
-
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/bank-credits', [BankCreditController::class, 'index'])->name('bank-credits');
+    Route::get('/bank-credits/search', [BankCreditController::class, 'find'])->name('bank-credits.find');
+    Route::get('/bank-credits/create', [BankCreditController::class, 'create'])->name('bank-credits.create');
+    Route::post('/bank-credits', [BankCreditController::class, 'store'])->name('bank-credits.store');
+
+    Route::get('/payment', [PaymentController::class, 'create'])->name('payment.create');
+    Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 });
 
 require __DIR__.'/auth.php';
