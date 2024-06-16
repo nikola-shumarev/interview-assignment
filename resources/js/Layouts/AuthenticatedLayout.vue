@@ -32,6 +32,14 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('bank-credits')" :active="route().current('bank-credits')">
                                     Bank Credits
                                 </NavLink>
+
+                                <NavLink :href="route('bank-credits.create')" :active="route().current('bank-credits.create')">
+                                    Create New Credit
+                                </NavLink>
+
+                                <NavLink :href="route('payment.create')" :active="route().current('payment.create')">
+                                    Payment
+                                </NavLink>
                             </div>
                         </div>
 
