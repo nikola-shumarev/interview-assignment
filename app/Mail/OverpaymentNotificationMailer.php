@@ -14,14 +14,14 @@ class OverpaymentNotificationMailer extends Mailable
     public $owedAmount;
     public $overpaidAmount;
 
-    public function __construct($uniqueId, $owedAmount, $overpaidAmount)
+    public function __construct(string $uniqueId, float $owedAmount, float $overpaidAmount)
     {
         $this->uniqueId = $uniqueId;
         $this->owedAmount = $owedAmount;
         $this->overpaidAmount = $overpaidAmount;
     }
 
-    public function build()
+    public function build(): Mailable
     {
         return $this->view('emails.overpayment')
                     ->with([

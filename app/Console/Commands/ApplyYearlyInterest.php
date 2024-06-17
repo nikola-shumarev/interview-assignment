@@ -25,12 +25,12 @@ class ApplyYearlyInterest extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Applying yearly interest to credits...');
 
         $credits = BankCredit::with('consumer:id,total_credit_amount')
-            ->where('due_date', '>=', now())
+            ->where('due_date', '>=', Carbon::now())
             ->get();
 
         foreach ($credits as $credit) {

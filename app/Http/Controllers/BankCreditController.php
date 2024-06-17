@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBankCreditRequest;
 use App\Models\BankCredit;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 use App\Services\BankCreditService;
 
 class BankCreditController extends Controller
 {
-    protected $bankCreditService;
+    protected BankCreditService $bankCreditService;
 
     public function __construct(BankCreditService $bankCreditService)
     {
@@ -20,9 +23,10 @@ class BankCreditController extends Controller
     /**
      * Display a listing of the bank credits.
      *
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return InertiaResponse|RedirectResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): InertiaResponse|RedirectResponse
     {
         $query = BankCredit::with(['consumer:id,name,email'])
             ->orderByRaw('remaining_amount = 0')  // Prioritize non-zero remaining_amount
@@ -41,11 +45,17 @@ class BankCreditController extends Controller
         ]);
     }
 
-    public function find(Request $request)
+    /**
+     * Find bank credits based on search criteria.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function find(Request $request): JsonResponse
     {
         $bankCredits = BankCredit::select(['id', 'consumer_id', 'remaining_amount', 'due_date'])
             ->with('consumer:id,name,email')
-            ->where('remaining_amount', '>', 0)  // Add this line to filter by remaining_amount
+            ->where('remaining_amount', '>', 0)
             ->when($request->has('search'), function ($query) use ($request) {
                 $search = $request->input('search');
                 return $query->where('id', 'like', '%' . trim($search, '0') . '%')
@@ -61,17 +71,28 @@ class BankCreditController extends Controller
         ]);
     }
 
-    public function create()
+    /**
+     * Show the form for creating a new bank credit.
+     *
+     * @return InertiaResponse
+     */
+    public function create(): InertiaResponse
     {
         return Inertia::render('BankCredits/Create');
     }
 
-    public function store(StoreBankCreditRequest $request)
+    /**
+     * Store a newly created bank credit in storage.
+     *
+     * @param  StoreBankCreditRequest  $request
+     * @return RedirectResponse
+     */
+    public function store(StoreBankCreditRequest $request): RedirectResponse
     {
-
         $consumer = $request->getConsumer();
         $this->bankCreditService->createCredit($request->validated(), $consumer);
 
         return redirect()->route('bank-credits', ['page' => 1])->with('success', 'Bank credit created successfully.');
     }
 }
+

@@ -5,22 +5,35 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentRequest;
 use Inertia\Inertia;
 use App\Services\PaymentService;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Response;
 
 class PaymentController extends Controller
 {
-    protected $paymentService;
+    protected PaymentService $paymentService;
 
     public function __construct(PaymentService $paymentService)
     {
         $this->paymentService = $paymentService;
     }
 
-    public function create()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Inertia\Response
+     */
+    public function create(): Response
     {
         return Inertia::render('Payment/Create');
     }
 
-    public function store(StorePaymentRequest $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StorePaymentRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(StorePaymentRequest $request): RedirectResponse
     {
         try {
             $isOverpayment = $this->paymentService->processPayment($request->validated());

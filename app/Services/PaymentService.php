@@ -4,11 +4,12 @@ namespace App\Services;
 use App\Mail\OverpaymentNotificationMailer;
 use App\Models\BankCredit;
 use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class PaymentService
 {
-    public function processPayment($data)
+    public function processPayment(array $data): bool
     {
         $bankCredit = BankCredit::select('id', 'remaining_amount', 'consumer_id')
                                 ->where('id', $data['bank_credit']['id'])
@@ -28,7 +29,7 @@ class PaymentService
         $payment = new Payment([
             'bank_credit_id' => $bankCredit->id,
             'amount' => $amount,
-            'payment_date' => now(),
+            'payment_date' => Carbon::now(),
         ]);
         $payment->save();
 

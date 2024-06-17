@@ -4,10 +4,11 @@ namespace App\Services;
 
 use App\Models\BankCredit;
 use App\Models\Consumer;
+use Carbon\Carbon;
 
 class BankCreditService
 {
-    public function createCredit($data, $consumer)
+    public function createCredit(array $data, Consumer $consumer): BankCredit
     {
         if (!$consumer) {
             $consumer = Consumer::firstOrCreate([
@@ -18,7 +19,7 @@ class BankCreditService
         }
 
         // Calculate due date based on the current date plus the number of months
-        $dueDate = now()->addMonths($data['months']);
+        $dueDate = Carbon::now()->addMonths($data['months']);
 
         $bankCredit = new BankCredit([
             'consumer_id' => $consumer->id,
