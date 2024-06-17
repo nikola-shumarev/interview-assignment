@@ -12,7 +12,7 @@ composer install
 
 php artisan migrate
 
-php artisan kay:generate
+php artisan key:generate
 
 npm install
 
