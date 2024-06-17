@@ -31,6 +31,7 @@ class ApplyYearlyInterest extends Command
 
         $credits = BankCredit::with('consumer:id,total_credit_amount')
             ->where('due_date', '>=', Carbon::now())
+            ->where('remaining_amount', '>', 0)
             ->get();
 
         foreach ($credits as $credit) {
